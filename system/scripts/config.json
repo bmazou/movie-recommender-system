@@ -1,0 +1,10 @@
+{
+    "mistral_api_url": "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2",
+    "mixtral_api_url": "https://api-inference.huggingface.co/models/mistralai/Mixtral-8x7B-v0.1",
+    "APP_DATABASE_URI": "sqlite:///users.db",
+
+    "openai_api_key": "[YOUR_OPENAI_KEY_HERE]",
+    "huggingface_api_key": "[YOUR_HUGGIN_FACE_TOKEN_HERE]",
+    "APP_SECRET_KEY": "[YOUR_SECRET_KEY_HERE]",
+    "TMDB_API_KEY": "[YOUR_TMDB_KEY_HERE]"
+}

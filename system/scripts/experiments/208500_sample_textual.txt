@@ -1,0 +1,8 @@
+Gravity: 4.0
+Her: 4.0
+Slumdog Millionaire: 5.0
+Whiplash: 5.0
+Gone Girl: 2.5
+127 Hours: 4.0
+Zero Dark Thirty: 4.0
+Dallas Buyers Club: 5.0

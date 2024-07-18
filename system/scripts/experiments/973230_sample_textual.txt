@@ -1,0 +1,8 @@
+Bolt: 3.0
+Schindler's List: 5.0
+The Lord of the Rings: The Return of the King: 5.0
+Eternal Sunshine of the Spotless Mind: 4.5
+Finding Nemo: 5.0
+Ratatouille: 5.0
+A Beautiful Mind: 5.0
+Despicable Me: 3.5

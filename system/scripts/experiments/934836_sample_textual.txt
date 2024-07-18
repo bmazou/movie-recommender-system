@@ -1,0 +1,8 @@
+Locke: 3.5
+Insurgent: 2.5
+Harry Potter and the Order of the Phoenix: 4.5
+Titanic: 3.0
+Batman: 3.0
+How to Train Your Dragon: 4.5
+The Godfather: Part III: 5.0
+V for Vendetta: 3.0

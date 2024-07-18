@@ -1,0 +1,8 @@
+The Shawshank Redemption: 5.0
+Reservoir Dogs: 5.0
+Forrest Gump: 3.0
+Django Unchained: 5.0
+Rear Window: 4.0
+Ace Ventura: Pet Detective: 3.0
+Interstellar: 5.0
+Psycho: 4.5

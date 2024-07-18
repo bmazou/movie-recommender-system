@@ -1,0 +1,8 @@
+Prometheus: 4.0
+Passengers: 0.5
+The Avengers: 4.0
+The Lord of the Rings: The Fellowship of the Ring: 4.5
+Star Trek Beyond: 3.0
+The Evil Dead: 3.5
+One Flew Over the Cuckoo's Nest: 3.5
+Cry, the Beloved Country: 5.0

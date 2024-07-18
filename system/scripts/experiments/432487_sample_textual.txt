@@ -1,0 +1,8 @@
+Ghost: 3.5
+Independence Day: 4.0
+(500) Days of Summer: 4.0
+Twister: 4.0
+101 Dalmatians: 3.5
+Scary Movie: 3.0
+Men in Black: 3.0
+Kick-Ass: 4.0

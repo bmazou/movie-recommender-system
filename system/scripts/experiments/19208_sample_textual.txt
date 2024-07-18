@@ -1,0 +1,8 @@
+Thor: 0.5
+Driving Miss Daisy: 5.0
+The Wizard of Oz: 3.0
+The Lord of the Rings: The Fellowship of the Ring: 4.0
+Zoolander: 0.5
+The Sisterhood of the Traveling Pants: 1.0
+My Big Fat Greek Wedding: 2.0
+Mission: Impossible II: 0.5

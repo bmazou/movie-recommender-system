@@ -1,0 +1,8 @@
+xXx: 3.5
+The 13th Warrior: 1.5
+The Lord of the Rings: The Two Towers: 5.0
+Coyote Ugly: 0.5
+City of God (Cidade de Deus): 0.5
+Ice Age: 4.0
+Star Wars: Episode IV - A New Hope: 0.5
+The Lord of the Rings: The Fellowship of the Ring: 5.0

@@ -1,0 +1,8 @@
+Collateral: 4.0
+The Fly: 2.0
+I, Robot: 3.0
+Blade: 3.5
+Batman Begins: 4.0
+Ransom: 3.0
+The Sixth Sense: 5.0
+John Wick: 3.5

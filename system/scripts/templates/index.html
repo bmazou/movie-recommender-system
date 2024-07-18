@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Movie Recommender</title>
+    <link rel="stylesheet" type="text/css" href="/static/header.css">
+    <link rel="stylesheet" type="text/css" href="/static/index.css">
+</head>
+<body>
+    <div class="header">
+        <a href="{{ url_for('home_lite_route') }}">Lite</a>
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('profile') }}">Profile</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        {% else %}
+            <a href="{{ url_for('login') }}">Login</a>
+            <a href="{{ url_for('register') }}">Register</a>
+        {% endif %}
+    </div>
+    <form action="/" method="post">
+        <br>
+        {% if current_user.is_authenticated %}
+            <input type="checkbox" name="use_past_ratings" id="use_past_ratings" checked>
+            <label for="use_past_ratings">Use my past ratings to enhance recommendations</label>
+        {% else %}
+            <input type="checkbox" name="use_past_ratings" id="use_past_ratings" disabled>
+            <label for="use_past_ratings">Use my past ratings to enhance recommendations (Login required)</label>
+        {% endif %}
+        <label for="llm_name">Choose LLM:</label>
+        <select name="llm_name" id="llm_name">
+            <option value="mistral">Mistral</option>
+            <option value="gpt-3.5">GPT-3.5</option>
+            <option value="gpt-4o">GPT-4o</option>
+            <option value="mixtral">Mixtral</option>
+        </select>
+        <br>
+        <label for="k_movies">Number of movies to recommend:</label>
+        <input type="number" id="k_movies" name="k_movies" value="12" min="1" max="100" required>
+        <br>
+
+        <textarea name="prompt" placeholder="Enter your movie preferences..." rows="8" cols="50"></textarea>
+        <div class="slider-container text-center">
+            <span>RS Importance: <span id="rsPercentage" class="percentage-display">50%</span></span>
+            <input type="range" id="importanceSlider" name="importanceSlider" min="0" max="100" value="50" oninput="updateImportance()">
+            <span>LLM Importance: <span id="llmPercentage" class="percentage-display">50%</span></span>
+        </div>
+        <br>
+        <input type="submit" value="Get Recommendations">
+    </form>
+    
+    <script>
+        function updateImportance() {
+            var slider = document.getElementById("importanceSlider");
+            var rsPercentage = document.getElementById("rsPercentage");
+            var llmPercentage = document.getElementById("llmPercentage");
+            rsPercentage.innerText = slider.value + "%";
+            llmPercentage.innerText = (100 - slider.value) + "%";
+            localStorage.setItem('importanceSliderValue', slider.value);
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            var savedSliderValue = localStorage.getItem('importanceSliderValue');
+            if (savedSliderValue !== null) {
+                var slider = document.getElementById("importanceSlider");
+                slider.value = savedSliderValue;
+                updateImportance();
+            }
+        });
+    </script>
+</body>
+</html>

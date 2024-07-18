@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/static/header.css">
+    <link rel="stylesheet" type="text/css" href="/static/index_lite.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Movie Recommender</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+  
+    <div class="header">
+      <a href="{{ url_for('home') }}">Full</a>
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('profile') }}">Profile</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        {% else %}
+            <a href="{{ url_for('login') }}">Login</a>
+            <a href="{{ url_for('register') }}">Register</a>
+        {% endif %}
+    </div>
+
+    <div class="container position-relative">
+        <form action="/lite" method="post" id="ratingForm">
+            <button type="submit" class="btn btn-primary" id="submitBtn">Submit</button>
+
+            {% if current_user.is_authenticated %}
+                <input type="checkbox" name="usePastRatings" id="usePastRatings" checked>
+                <label for="usePastRatings">Use my past ratings to enhance recommendations</label>
+            {% else %}
+                <input type="checkbox" name="usePastRatings" id="usePastRatings" disabled>
+                <label for="usePastRatings">Use my past ratings to enhance recommendations (Login required)</label>
+            {% endif %}
+
+            <div class="slider-container text-center">
+                <span>RS Importance: <span id="rsPercentage" class="percentage-display">50%</span></span>
+                <input type="range" id="importanceSlider" name="importanceSlider" min="0" max="100" value="50" oninput="updateImportance()">
+                <span>Tag Importance: <span id="llmPercentage" class="percentage-display">50%</span></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <h1>Rate Movies</h1>
+                    <div id="ratingFields">
+                        <div class="rating-field mb-3 position-relative">
+                            <label for="movieSearch" class="form-label">Search and rate a movie:</label>
+                            <input type="text" class="form-control movieSearch" placeholder="Type to search...">
+                            <ul class="list-group movieList"></ul>
+                            <input type="hidden" class="selectedMovieId" name="movieIds[]">
+                            <input type="hidden" class="selectedMovieTitle" name="movieTitles[]">
+                            <label for="rating" class="form-label">Your Rating:</label>
+                            <select class="form-select" name="movieRatings[]">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3" selected>3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-secondary" id="addRating">Add New Rating</button>
+                </div>
+                <div class="col-md-6">
+                    <h1>Select Tags</h1>
+                    <div id="tagFields">
+                        <div class="mb-3">
+                            <label for="tagSearch" class="form-label">Search and select tags:</label>
+                            <input type="text" class="form-control tagSearch" placeholder="Type to search...">
+                            <ul class="list-group tagList"></ul>
+                            <input type="hidden" class="selectedTagId" name="tagIds[]">
+                            <input type="hidden" class="selectedTagName" name="tagNames[]">
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-secondary" id="addTag">Add New Tag</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function updateImportance() {
+            var slider = document.getElementById("importanceSlider");
+            var rsPercentage = document.getElementById("rsPercentage");
+            var llmPercentage = document.getElementById("llmPercentage");
+            rsPercentage.innerText = slider.value + "%";
+            llmPercentage.innerText = (100 - slider.value) + "%";
+            // Save the slider value in local storage
+            localStorage.setItem('importanceSliderValue', slider.value);
+        }
+        
+        $(document).ready(function(){
+            var ratingIndex = 0;
+
+            function addSearchHandler(index, isTag) {
+                var url = isTag ? '/get_tags' : '/get_movies';
+                var searchInput = isTag ? $('.tagSearch').eq(index) : $('.movieSearch').eq(index);
+                var currentList = isTag ? $('.tagList').eq(index) : $('.movieList').eq(index);
+                var selectedId = isTag ? $('.selectedTagId').eq(index) : $('.selectedMovieId').eq(index);
+                var selectedName = isTag ? $('.selectedTagName').eq(index) : $('.selectedMovieTitle').eq(index);
+
+                function fetchMovies() {
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({search: searchInput.val()}),
+                        success: function(response){
+                            currentList.empty();
+                            var searchTerm = searchInput.val();
+                            var regex = new RegExp('(' + searchTerm + ')', 'gi');
+
+                            response.forEach(function(movie){
+                                var highlightedTitle = movie.title.replace(regex, '<span class="highlight">$1</span>');
+                                var listItem = $('<li class="list-group-item clickable">' + highlightedTitle + '</li>');
+                                listItem.on('click', function() {
+                                    selectedId.val(movie.item_id);
+                                    selectedName.val(movie.title);
+                                    searchInput.val(movie.title);
+                                    currentList.empty().hide();
+                                });
+                                currentList.append(listItem);
+                            });
+                            currentList.show();
+                            currentList.scrollTop(0);
+                        }
+                    });
+                }
+
+                searchInput.on('focus', fetchMovies);
+                searchInput.on('input', fetchMovies);
+                
+                // Close the list when clicking outside of the input or list
+                $(document).on('click', function(event) {
+                    if (!$(event.target).closest(searchInput).length && !$(event.target).closest(currentList).length) {
+                        currentList.empty().hide();
+                    }
+                });
+            }
+
+            function addTagSearchHandler(index) {
+                addSearchHandler(index, true);
+            }
+
+            function addMovieSearchHandler(index) {
+                addSearchHandler(index, false);
+            }
+
+            addMovieSearchHandler(0);
+            addTagSearchHandler(0);
+            
+            
+
+            $('#addRating').click(function(){
+                var newField = $('.rating-field:first').clone();
+                newField.find('input[type="text"], input[type="hidden"]').val('');
+                newField.find('select').val('3'); 
+                newField.appendTo('#ratingFields');
+                addMovieSearchHandler($('#ratingFields .rating-field').length - 1);
+            });
+
+            $('#addTag').click(function(){
+                console.log('Adding tag field');
+                var newField = $('#tagFields .mb-3:first').clone();
+                newField.find('input[type="text"], input[type="hidden"]').val('');
+                newField.appendTo('#tagFields');
+                addTagSearchHandler($('#tagFields .mb-3').length - 1);
+            });
+        });
+    </script>
+</body>
+</html>

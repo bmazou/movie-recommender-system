@@ -1,0 +1,60 @@
+.rating {
+    direction: rtl;
+    unicode-bidi: bidi-override;
+    display: inline-block;
+    position: relative;
+    font-size: 2em;
+    cursor: pointer;
+}
+
+.rating input {
+    position: absolute;
+    left: -9999px;
+}
+
+.rating label {
+    color: #ddd;
+    font-size: 2em;
+    padding: 0;
+    cursor: pointer;
+    -webkit-transition: color 0.3s;
+    -moz-transition: color 0.3s;
+    -o-transition: color 0.3s;
+    transition: color 0.3s;
+}
+
+.rating label:hover,
+.rating label:hover ~ label,
+.rating input:checked ~ label {
+    color: gold;
+}
+
+/* Changes the size of the stars */
+label[for^="rating-"] {
+    font-size: 40px;
+}
+
+/* Displays  */
+.movie-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+}
+.movie-item img {
+    margin-right: 20px;
+    width: 120px;  
+    height: auto;  
+}
+.movie-details {
+    display: flex;
+    flex-direction: column;
+}
+.rating-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.button-group {
+    margin-top: 10px;
+}

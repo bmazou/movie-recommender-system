@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Recommendations</title>
+    <link rel="stylesheet" type="text/css" href="/static/header.css">
+    <link rel="stylesheet" type="text/css" href="/static/results.css">
+</head>
+<body>
+    <div class="header">
+        <a href="{{ url_for('home_lite_route') }}">Lite</a>
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('profile') }}">Profile</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        {% else %}
+            <a href="{{ url_for('login') }}">Login</a>
+            <a href="{{ url_for('register') }}">Register</a>
+        {% endif %}
+    </div>
+    <div class="container">
+        {% for movie in recommendations %}
+        <div class="movie">
+            <a href="https://www.imdb.com/title/{{ movie.imdb_id }}" target="_blank">
+                <img src="{{ url_for('poster', imdb_id=movie.imdb_id) }}" alt="Poster of {{ movie.title }} not found">
+            </a>
+            <h2>{{ movie.title }}</h2>
+            <p><dfn title="A weighted combination of RS and LLM score, normalised to be between 0 and 10, with the best movie always being 10">Total score: </dfn><span class="score">{{ movie.total_score }}</span></p>
+            <p><dfn title="Importance ratio as set in the previous step.">RS/LLM importance: </dfn><span class="score">{{ rs_importance }}/{{ 100-rs_importance }}</span></p>
+            <p><dfn title="How good of a recommendation it is according to tradional recommender algorithms. This score is relative to the other recommendations in this batch.">RS score: </dfn><span class="score">{{ movie.rs_score }}</span></p>
+            <p><dfn title="How well the movie's plot matches user preferences according to the LLM. Score is in the range [0,5].">LLM score: </dfn><span class="score">{{ movie.llm_score }}</span></p>
+            <p><dfn title="Reasoning behind the LLM's decision to assign the above score.">LLM explanation: </dfn>{{ movie.explanation }}</p>
+
+            {% if current_user.is_authenticated %}
+            <form id="rate-form-{{ movie.imdb_id }}" action="{{ url_for('rate_movie') }}" method="POST" class="rate-form">
+                <label for="rating">Rate movie:</label>
+                <input type="hidden" name="imdb_id" value="{{ movie.imdb_id }}">
+                <div class="rating">
+                    {% for i in range(5, 0, -1) %}
+                    <input type="radio" name="rating" value="{{ i }}" id="rating-{{ movie.imdb_id }}-{{ i }}">
+                    <label for="rating-{{ movie.imdb_id }}-{{ i }}">★</label>
+                    {% endfor %}
+                </div>
+                <input type="submit" value="Rate">
+            </form>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    <script>
+        document.querySelectorAll('.rate-form').forEach(form => {
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const formData = new FormData(this);
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        console.log('Rating submitted successfully');
+                    } else {
+                        console.error('Error submitting rating');
+                    }
+                }).catch(error => {
+                    console.error('Error submitting rating', error);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

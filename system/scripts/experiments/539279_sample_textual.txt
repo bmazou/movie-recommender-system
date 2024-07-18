@@ -1,0 +1,8 @@
+Gravity: 4.5
+The Matrix: 5.0
+Mad Max: Fury Road: 3.5
+The Wolf of Wall Street: 2.5
+Terminator 2: Judgment Day: 2.0
+Guardians of the Galaxy 2: 4.5
+Slumdog Millionaire: 4.5
+The Imitation Game: 3.0

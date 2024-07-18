@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Profile</title>
+    <link rel="stylesheet" type="text/css" href="/static/header.css">
+    <link rel="stylesheet" type="text/css" href="/static/profile.css">
+</head>
+<body>
+    <div class="header">
+        <a href="{{ url_for('home') }}">Full</a>
+        <a href="{{ url_for('home_lite_route') }}">Lite</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+    <div class="container">
+        <h1>Your Ratings</h1>
+        <ul>
+            {% for movie in rated_movies %}
+            <li class="movie-item">
+                <img src="{{ url_for('static', filename='posters/' ~ movie.imdb_id ~ '.jpg') }}" alt="Poster of {{ movie.title }} not found">
+                <div class="movie-details">
+                    <h2>{{ movie.title }}</h2>
+                    <!-- <b>{{ movie.title }}</b> -->
+                    <form id="rate-form-{{ movie.imdb_id }}" action="{{ url_for('rate_movie') }}" method="POST" class="rate-form">
+                        <div class="rating-group">
+                            <input type="hidden" name="imdb_id" value="{{ movie.imdb_id }}">
+                            <div class="rating">
+                                {% for i in range(5, 0, -1) %}
+                                <input type="radio" name="rating" value="{{ i }}" id="rating-{{ movie.imdb_id }}-{{ i }}" {% if movie.rating == i %}checked{% endif %}>
+                                <label for="rating-{{ movie.imdb_id }}-{{ i }}">★</label>
+                                {% endfor %}
+                            </div>
+                            <div class="button-group">
+                                <input type="submit" class="change-rating-button" value="Change rating">
+                                <button type="button" class="delete-button" data-imdb-id="{{ movie.imdb_id }}">Delete Rating</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <script>
+        document.querySelectorAll('.rate-form').forEach(form => {
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const formData = new FormData(this);
+                fetch(this.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        console.log('Rating submitted successfully');
+                    } else {
+                        console.error('Error submitting rating');
+                    }
+                }).catch(error => {
+                    console.error('Error submitting rating', error);
+                });
+            });
+        });
+
+        document.querySelectorAll('.delete-button').forEach(button => {
+            button.addEventListener('click', function() {
+                const imdbId = this.dataset.imdbId;
+                fetch('{{ url_for("delete_rating") }}', {
+                    method: 'POST',
+                    body: JSON.stringify({ imdb_id: imdbId }),
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        console.log('Rating deleted successfully');
+                        location.reload();   // Reload the page to reflect the changes
+                    } else {
+                        console.error('Error deleting rating');
+                    }
+                }).catch(error => {
+                    console.error('Error deleting rating', error);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

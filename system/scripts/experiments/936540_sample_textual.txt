@@ -1,0 +1,8 @@
+Apollo 13: 4.5
+A Bug's Life: 4.0
+Blade Runner: 4.5
+Fight Club: 5.0
+Casablanca: 5.0
+Schindler's List: 5.0
+The Silence of the Lambs: 5.0
+Star Wars: Episode IV - A New Hope: 5.0
